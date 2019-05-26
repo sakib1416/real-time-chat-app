@@ -10,6 +10,20 @@ app.use(express.static(__dirname + "/public"));
 io.on("connection", (socket) => {
 
     console.log("New user connected");
+
+    //when a client sends a message(createMessage) from a different tab we listen it and then emit(newMessage) it to everyone else 
+    socket.on("createMessage", (message) => {
+        console.log(message);
+        io.emit("newMessage", {
+            from: message.from,
+            text: message.text,
+            createdAt: Date.now()
+        });
+    });
+    
+    socket.on("disconnect", () => {
+        console.log("User was disconnected");
+    });
     //creating an Event
     // socket.emit("newEmail", {
     //     from: "sakib1416@gmail.com",
@@ -20,18 +34,11 @@ io.on("connection", (socket) => {
     // socket.on("createEmail", (email) => {
     //     console.log("Create Email", email);
     // });
-    socket.emit("newMessage", {
-        from: "Maz",
-        text: "What's up?",
-        createdAt: 123
-    });
-    socket.on("createMessage", (message) => {
-        console.log(message);
-    });
-    
-    socket.on("disconnect", () => {
-        console.log("User was disconnected");
-    });
+    // socket.emit("newMessage", {
+    //     from: "Maz",
+    //     text: "What's up?",
+    //     createdAt: 123
+    // });
 });
 
 //server.listen allows us to use socket.io 
